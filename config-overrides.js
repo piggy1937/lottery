@@ -15,7 +15,7 @@ const {
       addDecoratorsLegacy(),
       useBabelRc(),
       fixBabelImports("import", {
-        libraryName: "antd-mobile", libraryDirectory: "es", style: true // change importing css to less
+        libraryName: "antd", libraryDirectory: "es", style: 'css' // change importing css to less
       }),
       addLessLoader({
         javascriptEnabled: true,

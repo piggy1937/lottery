@@ -100,3 +100,8 @@ export function treeTransArray(treeObj, rootid) {
         return o;
     }
 }
+
+
+export function delay(ms){
+   return  new Promise(resolve => setTimeout(resolve, ms));
+}

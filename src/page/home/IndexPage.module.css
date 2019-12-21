@@ -1,0 +1,66 @@
+
+.normal {
+  font-family: Georgia, sans-serif;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: normal;
+  letter-spacing: -1px;
+}
+
+.list {
+  font-size: 1.2em;
+  margin-top: 1.8em;
+  list-style: none;
+  line-height: 1.5em;
+}
+
+.list code {
+  background: #f7f7f7;
+}
+
+.content {
+  width: 500px;
+  display: flex;
+  justify-content: center;
+}
+
+.lucky {
+  font-size: 50px;
+  color: #ffffff;
+  position: fixed;
+  top: 37%;
+  width: 100%;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  height: 130px;
+  line-height: 130px;
+}
+
+.drawerTrigger{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 100%;
+}
+.startButton{
+  width: 80px;
+  height: 80px;
+}
+.prize{
+    display: inline-block;
+    font-size: 45px;
+    color: #f1bf90;
+    text-align: center;
+    width: 20%;
+    line-height: 100px;
+    font-family: Arial;
+}

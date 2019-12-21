@@ -7,6 +7,7 @@ import { Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './store'
 import history from './utils/history'
+import 'antd/dist/antd.css'; 
 ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
