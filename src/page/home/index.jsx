@@ -4,6 +4,7 @@ import styles from './IndexPage.module.css';
 import LeftDrawer from '@/components/LeftDrawer';
 import {  withRouter } from 'react-router-dom'
 import {delay} from '@/utils/util'
+import Background from  '@/components/Background'
 @withRouter
 class IndexPage extends React.Component {
 
@@ -64,7 +65,9 @@ class IndexPage extends React.Component {
   }
   render() {
       const {curPrize,runing} = this.state
-    return <div className={styles.normal}>
+    return (
+      <Background>
+    <div className={styles.normal}>
       <div className={styles.content}>
         <div className={styles.lucky}>
             <Row>
@@ -89,6 +92,8 @@ class IndexPage extends React.Component {
         onClose={this.onClose}
       />
     </div >
+    </Background>
+    )
   }
 
 

@@ -3,7 +3,7 @@ import Particles from 'react-particles-js'
 
 import themes from '../utils/themes';
 import { withRouter } from 'react-router-dom'
-
+@withRouter
 class Background extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +18,21 @@ class Background extends Component {
     return (
       <div className={'particles'}>
         <Particles
-          params={themes[index]}
+          params={
+            Object.assign(themes[index],{
+              polygon: {
+              enable: false,
+              type: 'inside',
+              move: {
+                radius: 10
+              },
+              // url: require('../assets/snowflaker.svg')
+              }
+            })
+              }
+                
+       
+          
           style={{
             position: 'fixed',
             width: '100%',
@@ -34,4 +48,4 @@ class Background extends Component {
   }
 }
 
-export default withRouter(Background);
+export default Background;
