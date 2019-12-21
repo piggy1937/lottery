@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { cloneDeep, isEmpty } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
-import { Toast } from 'antd-mobile'
+import { Message } from 'antd'
 import { CANCEL_REQUEST_MESSAGE } from '@/utils/constant'
 import { isAuthenticated, logout } from '@/utils/session'
 import { refreshToken } from '@/store/actions'
@@ -79,7 +79,7 @@ export default function request(options) {
     url = domain + url
 
   } catch (e) {
-    Toast.fail(e.message)
+    Message.fail(e.message)
   }
 
   options.url = url

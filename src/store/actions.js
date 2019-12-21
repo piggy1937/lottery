@@ -1,7 +1,7 @@
 import React from 'react'
 import  request  from '@/utils/request'
 import {logout,authenticateSuccess,isAuthenticated} from '@/utils/session'
-import { Toast } from 'antd-mobile'
+import { Message } from 'antd'
 import { replaceImg } from '../utils/util'
 import history  from '@/utils/history'
 // 虽然用户信息放在localStorage也可以全局使用，但是如果放在localStorage中，用户信息改变时页面不会实时更新
@@ -241,7 +241,7 @@ export function initWebSocket(user) {    //初始化websocket对象
             //在线人数变化的消息
             if (data.type === 0) {
                 dispatch(setOnlinelist(data.msg.onlineList))
-                data.msg.text && Toast.info({
+                data.msg.text && Message.info({
                     message: '提示',
                     description: data.msg.text
                 })
@@ -249,7 +249,7 @@ export function initWebSocket(user) {    //初始化websocket对象
             //聊天的消息
             if (data.type === 1) {
                 dispatch(addChat(data.msg))
-                Toast.open({
+                Message.open({
                     message: data.msg.username,
                     description: <div dangerouslySetInnerHTML={{ __html: replaceImg(data.msg.content) }} />,
                     // icon: <Avatar src={data.msg.userAvatar} />
