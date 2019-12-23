@@ -32,8 +32,12 @@ class DataPage extends React.Component {
   handleAdd =()=> {
     const employees = [...this.state.employees]
     const id = this.input.value;
-    const newEmployees = {id}
-    this.setState({employees:[...employees,newEmployees],value:''})
+    if(id===''){
+      message.error("添加人员不能为空")
+    }else{
+      const newEmployees = {id}
+      this.setState({employees:[...employees,newEmployees],value:''})
+    }
   }
 
   addValue=(e)=>{
