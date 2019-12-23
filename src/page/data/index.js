@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './index.module.css';
-import { Upload, message, Button, Icon, Table } from 'antd';
+import { Upload, message, Button, Icon, Table, Popconfirm } from 'antd';
 
 import * as XLSX from 'xlsx';
 
@@ -14,8 +14,36 @@ class DataPage extends React.Component {
     super(props);
     const value = sessionStorage.getItem(SESSION_KEY)
     this.state = {
-      employees: value ? JSON.parse(value) : []
+      employees: value ? JSON.parse(value) : [],
+      value:''
     }
+  }
+
+  //删除
+  handleDelete = id =>{
+    const employees = [...this.state.employees];
+    console.log(employees)
+    this.setState({ employees: employees.filter(item => item.id !== id) });
+    message.success("删除成功："+id)
+  }
+
+
+ //添加
+  handleAdd =()=> {
+    const employees = [...this.state.employees]
+    const id = this.input.value;
+    const newEmployees = {id}
+    this.setState({employees:[...employees,newEmployees],value:''})
+  }
+
+  addValue=(e)=>{
+    this.setState({
+      value:e.target.value
+    })
+  }
+
+  onReturn =()=>{
+    this.props.history.goBack();
   }
 
   render() {
@@ -78,7 +106,14 @@ class DataPage extends React.Component {
         </Button>
       </Upload>
 
-      <Table
+        <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
+         添加工号
+        </Button>&emsp;&emsp;
+        <input type="text" ref={input => this.input = input} onChange={this.addValue} value = {this.state.value}  placeholder="请输入添加工号"/>
+        <Button onClick={this.onReturn} type="primary" style={{ left:500}}>
+          返回
+        </Button>
+        <Table
         bordered
         pagination={{
           pageSize: 50
@@ -87,9 +122,12 @@ class DataPage extends React.Component {
         dataSource={this.state.employees}
         rowKey={record => record.id}>
         <Column title="工号" key="id" dataIndex="id" width='25%'/>
-      
+
         <Column title="操作" key="x" dataIndex="" render={
-          (text, record) => (<a onClick={() => {console.log( record.id)}}>删除</a>)} />
+          (text, record) =>(<Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete( record.id)}>
+            <a>删除</a>
+          </Popconfirm>)}
+           />
       </Table>
     </div>
     </div>
