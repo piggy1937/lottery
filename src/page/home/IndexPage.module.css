@@ -57,10 +57,19 @@
 }
 .prize{
     display: inline-block;
-    font-size: 45px;
+    font-size: 85px;
     color: #f1bf90;
     text-align: center;
     width: 20%;
     line-height: 100px;
     font-family: Arial;
+}
+.prize_grade {
+  position: absolute;
+    top: 174px;
+    font-size: 80px;
+    color:  #FFFFE0 ;
+    font-family:'STKaiti';
+    text-align: center;
+    margin: 0px auto 0;
 }

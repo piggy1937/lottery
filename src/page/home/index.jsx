@@ -5,6 +5,17 @@ import LeftDrawer from '@/components/LeftDrawer';
 import {  withRouter } from 'react-router-dom'
 import {delay} from '@/utils/util'
 import Background from  '@/components/Background'
+import { connect, } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setPrize} from '@/store/actions'
+
+const store = connect(
+  (state) => ({
+    setting: state.prize.prizes, //奖项设置
+  }),
+  (dispatch) => bindActionCreators({setPrize}, dispatch)
+)
+@store
 @withRouter
 class IndexPage extends React.Component {
 
@@ -53,10 +64,9 @@ class IndexPage extends React.Component {
      if(runing){
         clearInterval(this.myNumber);
      }else{
-         let _this= this
-       this. myNumber = setInterval(function(){
+       this.myNumber = setInterval(()=>{
           let  prize=  Math.floor(Math.random() * 300)
-          _this.setState({
+          this.setState({
             curPrize:prize
          })
 
@@ -65,33 +75,38 @@ class IndexPage extends React.Component {
   }
   render() {
       const {curPrize,runing} = this.state
+      const {setting} = this.props
+       console.log('setting',setting)
+
     return (
       <Background>
-    <div className={styles.normal}>
-      <div className={styles.content}>
-        <div className={styles.lucky}>
-            <Row>
-               <Col><span className={styles.prize}>{curPrize}</span></Col> 
-            </Row>
-             <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.tonggole()}  >
-                 {runing?'暂停':'开始'}
-             </Button> 
+        <div className={styles.normal}>
+        <span className={styles.prize_grade}> 一等奖3000元</span>
+          <div className={styles.content}>
+            <div className={styles.lucky}>
+              
+                <Row>
+                  <Col><span className={styles.prize}>{curPrize}</span></Col> 
+                </Row>
+                <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.tonggole()}  >
+                    {runing?'暂停':'开始'}
+                </Button> 
 
-         
-         
-        </div>
-        {/* <div className={styles.footer}>
-          <Button onClick={this.onRollUp}>抽奖</Button>
-        </div> */}
-      </div>
+            
+            
+            </div>
+            {/* <div className={styles.footer}>
+              <Button onClick={this.onRollUp}>抽奖</Button>
+            </div> */}
+          </div>
 
-      <div className={styles.drawerTrigger} onClick={this.showDrawer} />
-      <LeftDrawer
-        {...this.props}
-        visible={this.state.visible}
-        onClose={this.onClose}
-      />
-    </div >
+          <div className={styles.drawerTrigger} onClick={this.showDrawer} />
+          <LeftDrawer
+            {...this.props}
+            visible={this.state.visible}
+            onClose={this.onClose}
+          />
+        </div >
     </Background>
     )
   }
