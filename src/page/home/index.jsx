@@ -63,7 +63,13 @@ class IndexPage extends React.Component {
    */
   tonggole=async ()=>{
 
-
+    if (this.state.isPrizeChanged) {
+      this.setState({
+        isPrizeChanged: false,
+      });
+      this.computeCurrentPrize();
+      return;
+    }
     try {
       if (this.drawService.isRolling) {
         this.drawService.pickOneThenDo((selected) => {
