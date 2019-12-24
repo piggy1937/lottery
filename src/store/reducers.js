@@ -1,37 +1,33 @@
 import { combineReducers } from 'redux'
-import { Map } from 'immutable';
-import {
-    SET_PRIZE
-} from './actions'
+import { Map, List } from 'immutable';
 
+import {
+    SET_PRIZE,
+    ADD_WINNER
+} from './actions'
+const uuidv4 = require('uuid/v4');
 /**
  * 奖项信息
  * @param {*} state 
  * @param {*} action 
  */
-const defaultPrize = {
-    prizes:[
-        {
-            name:'三等奖',
-            desc:'金额1000元',
-            quantity:30,  //数量
-            level:0       //显示顺序
-        },
-        {
-            name:'二等奖',
-            desc:'金额2000元',
-            quantity:10,  //数量
-            level:1       //显示顺序
-        },
-        {
-            name:'一等奖',
-            desc:'金额5000元',
-            quantity:2,  //数量
-            level:2       //显示顺序
-        }
-    ]
+const defaultLotteryDrawing = {
+    setting: [{
+        id: uuidv4(),
+        title: '三等奖',
+        totalCount: 3,
+      },{
+        id: uuidv4(),
+        title: '二等奖',
+        totalCount: 2,
+      },{
+        id: uuidv4(),
+        title: '一等奖',
+        totalCount: 1,
+      }]
 }
-function prize(state = {}, action) {
+
+function lotteryDrawing(state = defaultLotteryDrawing, action) {
     switch (action.type) {
         case SET_PRIZE: {
             return action.prize
@@ -42,11 +38,42 @@ function prize(state = {}, action) {
     }
 }
 
+/***
+ * 奖励池配置
+ */
+const defaultLotteryPool = {
+    allParticipants: [
+       {code:1},
+       {code:2},
+       {code:3},
+       {code:4},
+       {code:5}
+    ], //所有参与者
+    winners: [] //获奖者
+  };
+function lotteryPool(state = defaultLotteryPool, action) {
+    switch (action.type) {
+        case ADD_WINNER: {
+            const map = Map(state)
+            let winners =map.get('winners')
+            winners.push(action.winner);
+            return map.set('winners',winners).toJS()
+        }
+        
+        default:
+            return state
+    }
+}
+
+
+
+
 
 
 
 const rootReducer = combineReducers({
-    prize,
+    lotteryDrawing,
+    lotteryPool
 })
 
 export default rootReducer 

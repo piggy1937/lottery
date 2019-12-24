@@ -7,13 +7,15 @@ import {delay} from '@/utils/util'
 import Background from  '@/components/Background'
 import { connect, } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { setPrize} from '@/store/actions'
-
+import { setPrize,addWinner} from '@/store/actions'
+import DrawService from '@/service/DrawService'
 const store = connect(
   (state) => ({
-    setting: state.prize.prizes, //奖项设置
+    setting: state.lotteryDrawing.setting, //奖项设置
+    winners: state.lotteryPool.winners,
+    allParticipants:state.lotteryPool.allParticipants, //参与者
   }),
-  (dispatch) => bindActionCreators({setPrize}, dispatch)
+  (dispatch) => bindActionCreators({setPrize,addWinner}, dispatch)
 )
 @store
 @withRouter
@@ -25,7 +27,10 @@ class IndexPage extends React.Component {
       visible: false,//是否显示抽屉
       curPrize:'000',
       runing:false,
-      winners:[]
+      currentPrize: '',//当前奖项
+      isPrizeChanged:false,
+      selectedParticipant: {}, //选择的参与者
+      btnDisabled: false, //按钮是否可点击
     }
     this.lastTime = 0;
   }
@@ -57,22 +62,118 @@ class IndexPage extends React.Component {
    * 开始or 结束
    */
   tonggole=async ()=>{
-     this.setState({
-        runing:!this.state.runing
-     })
-     const {runing} = this.state
-     if(runing){
-        clearInterval(this.myNumber);
-     }else{
-       this.myNumber = setInterval(()=>{
-          let  prize=  Math.floor(Math.random() * 300)
-          this.setState({
-            curPrize:prize
-         })
 
-          }, 30);
-     }
+
+    try {
+      if (this.drawService.isRolling) {
+        this.drawService.pickOneThenDo((selected) => {
+          selected.prize = this.state.currentPrize;
+          this.props.addWinner(selected);
+          this.computeCurrentPrize();
+        })
+      } else {
+        this.drawService.rollUp();
+      }
+    } catch (err) {
+      console.error(err.message)
+    }
+
+    //  this.setState({
+    //     runing:!this.state.runing
+    //  })
+    //  const {runing} = this.state
+    //  if(runing){
+    //     clearInterval(this.myNumber);
+    //  }else{
+    //    this.myNumber = setInterval(()=>{
+    //       let  prize=  Math.floor(Math.random() * 300)
+    //       this.setState({
+    //         curPrize:prize
+    //      })
+
+    //       }, 30);
+    //  }
   }
+  /**
+   * 获取标题
+   */
+  getTitle=()=>{
+    const {existingCountOfCurrentPrize,isPrizeChanged,currentPrize,noPrize} = this.state
+    if (existingCountOfCurrentPrize=== 0 && !isPrizeChanged) {
+      return `${currentPrize.title}(${currentPrize.totalCount}名)`
+    } else if(noPrize){
+      return "";
+    }
+    return `${currentPrize.title}(${existingCountOfCurrentPrize} / ${currentPrize.totalCount})`
+  }
+  /***
+   * 获取数字
+   */
+  getContent=()=>{
+    const {existingCountOfCurrentPrize,isPrizeChanged,selectedParticipant,noPrize} = this.state
+    if (existingCountOfCurrentPrize === 0 && !this.drawService.isRolling && !isPrizeChanged) {
+      return "等待开奖";
+    } else if(noPrize){
+      return "抽奖结束";
+    }
+    return (<div className="selectedParticipant">
+      <div className="name">{selectedParticipant.code}</div>
+    </div>)
+  }
+  //获取按钮
+  getButton=()=>{
+    if (this.state.noPrize) {
+      return "抽奖结果";
+    } else if (this.drawService) {
+      return this.drawService.isRolling ? "暂停" : (this.state.isPrizeChanged ? "下一轮" : "开始")
+    }
+      return '';
+  }
+
+  //计算当前奖项
+  computeCurrentPrize=()=>{
+    const {isPrizeChanged} = this.state
+    const {winners} = this.props
+    const currentPrize = this.getCurrentPrize(isPrizeChanged);
+    if (currentPrize) {
+      const existingCountOfCurrentPrize =winners.filter(winner => winner.prize.id === currentPrize.id).length;
+      this.setState({
+        currentPrize,
+        existingCountOfCurrentPrize
+      });
+    } else {
+      this.setState({
+        noPrize: true
+      });
+    }
+    return currentPrize;
+  }
+  //获取当前的奖项
+  getCurrentPrize(next){
+    const {winners,setting} = this.props //当前获奖者
+    const {currentPrize} = this.state
+    const items = winners.filter(winner => (winner.prize.id === currentPrize.id));
+    if (!next && (currentPrize.totalCount - items.length || 0) >= 0 && currentPrize) {
+      if ((currentPrize.totalCount - items.length || 0) === 0) {
+        this.setState({
+          isPrizeChanged: true,
+        });
+      }
+      return currentPrize;
+
+  }
+    return setting.find((lottery) => {
+      const items = winners.filter(winner => (winner.prize.id === lottery.id));
+      if ((lottery.totalCount - items.length || 0) <= 0) {
+        return false;
+      }
+      return true
+    });
+}
+ 
+
+  
+
   render() {
       const {curPrize,runing} = this.state
       const {setting} = this.props
@@ -81,16 +182,21 @@ class IndexPage extends React.Component {
     return (
       <Background>
         <div className={styles.normal}>
-        <span className={styles.prize_grade}> 一等奖3000元</span>
+         
           <div className={styles.content}>
+            <header className={styles.prizeTitle}>
+              {this.getTitle()}
+            </header>
             <div className={styles.lucky}>
+            <Row>
+               <span className={styles.prize}>  {this.getContent()}</span>
+            </Row>   
               
-                <Row>
-                  <Col><span className={styles.prize}>{curPrize}</span></Col> 
-                </Row>
-                <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.tonggole()}  >
-                    {runing?'暂停':'开始'}
-                </Button> 
+            <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.tonggole()}  >
+                {
+                  this.getButton()
+                }
+            </Button> 
 
             
             
@@ -128,7 +234,21 @@ class IndexPage extends React.Component {
   }
 
   componentDidMount() {
+    const {allParticipants} = this.props
     window.addEventListener('keypress', this.enterEvent)
+    this.drawService = DrawService.from(allParticipants)
+      .setOnSelectedChangedCallback((selectedItem) => {
+        this.setState({
+          selectedParticipant: selectedItem,
+        });
+      })
+      .setNoDuplicate(true)
+      .setOnPickBlockedChangedCallback((blocked) => {
+        this.setState({
+          btnDisabled: blocked
+        });
+      });
+    this.computeCurrentPrize();
     // this.props.dispatch({
     //   type: 'lottery/init'
     // })

@@ -12,6 +12,14 @@ export function setPrize(prize) {
         prize
     }
 }
+//新增获奖者
+export const ADD_WINNER = 'add_winner'
+export const addWinner = winner => ({
+    type: ADD_WINNER,
+    winner
+  });
+
+
 //异步刷新token ,防止token 失效
 export const REFRESH_TOKEN = 'refresh_token'
 export async function refreshToken(params)
