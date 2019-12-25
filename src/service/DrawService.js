@@ -23,7 +23,7 @@ export default class DrawService {
         throw new Error("No item in pool");
       }
       this.isRolling = true;
-      this.timer = setInterval(this.change.bind(this), 80);
+      this.timer = setInterval(this.change.bind(this), 30);
     }
     return this;
   }
