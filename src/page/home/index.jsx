@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button,Row,Col} from 'antd'
+import {Button,Row,Col,Modal} from 'antd'
 import styles from './IndexPage.module.css';
 import LeftDrawer from '@/components/LeftDrawer';
 import {  withRouter } from 'react-router-dom'
@@ -24,6 +24,7 @@ class IndexPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      modalVisible:false,
       visible: false,//是否显示抽屉
       curPrize:'000',
       runing:false,
@@ -135,6 +136,17 @@ class IndexPage extends React.Component {
     }
       return '';
   }
+  getRetryButton = ()=>{
+    if(this.drawService){
+          if(this.drawService.isRolling){
+            return false;
+          }
+          if(  this.state.isPrizeChanged){
+            return true
+          }
+    }
+    return false
+  }
 
   //计算当前奖项
   computeCurrentPrize=()=>{
@@ -176,10 +188,24 @@ class IndexPage extends React.Component {
       return true
     });
 }
- 
-
-  
-
+  /***
+    * 重抽
+    */
+  showModal=()=>{
+    this.setState({
+      modalVisible: true,
+    });
+  }
+  handleOk=()=>{
+    this.setState({
+      modalVisible: false,
+    });
+  }
+  handleCancel=()=>{
+    this.setState({
+      modalVisible: false,
+    });
+  }
   render() {
       const {curPrize,runing} = this.state
       const {setting} = this.props
@@ -203,6 +229,12 @@ class IndexPage extends React.Component {
                   this.getButton()
                 }
             </Button> 
+            {this.getRetryButton() ? (
+              <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.showModal()}  >
+              重抽
+              </Button> 
+            ) : null}
+            
 
             
             
@@ -218,6 +250,16 @@ class IndexPage extends React.Component {
             visible={this.state.visible}
             onClose={this.onClose}
           />
+        <Modal
+          title="重抽设置"
+          visible={this.state.modalVisible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         </div >
     </Background>
     )
