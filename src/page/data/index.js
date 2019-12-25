@@ -31,14 +31,13 @@ class DataPage extends React.Component {
 
  //添加
   handleAdd =()=> {
-    console.log("121212121221",this.state.employees)
-    const employees = [...this.state.employees]
+    const employees = this.state.employees
     const inputValue = this.state.inputValue
     if(inputValue===''){
       message.error("添加人员不能为空")
     }else{
       const add = {code:inputValue}
-      const newEmployees = [...this.state.employees,add]
+      const newEmployees = [...employees,add]
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(newEmployees));
       this.setState({employees:newEmployees,inputValue:''})
     }
@@ -108,16 +107,16 @@ class DataPage extends React.Component {
     return <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
       <div className={styles.container}>
       <Upload {...props}>
-        <Button>
-          <Icon type="upload" />读取过滤序号
-        </Button>
+        <Button type="primary">
+          <Icon type="upload" />导入抽奖人数
+        </Button>&emsp;
       </Upload>
 
         <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
          添加工号
         </Button>&emsp;&emsp;
         <input type="text" ref={input => this.input = input} onChange={this.addValue} value = {this.state.inputValue}  placeholder="请输入添加工号"/>
-        <Button onClick={this.onReturn} type="primary" style={{ left:500}}>
+        <Button onClick={this.onReturn} type="primary" style={{ position: "relative", left:540}}>
           返回
         </Button>
         <Table
@@ -130,7 +129,7 @@ class DataPage extends React.Component {
         rowKey={record => record.id}>
         <Column title="工号" key="code" dataIndex="code" width='25%'/>
 
-        <Column title="操作" key="x" dataIndex="" render={
+        <Column title="操作" key="" dataIndex="" render={
           (text, record) =>(<Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete( record.code)}>
             <a>删除</a>
           </Popconfirm>)}
