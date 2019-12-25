@@ -214,7 +214,7 @@ class IndexPage extends React.Component {
     return (
       <Background>
         <div className={styles.normal}>
-         
+
           <div className={styles.content}>
             <header className={styles.prizeTitle}>
               {this.getTitle()}
@@ -222,8 +222,8 @@ class IndexPage extends React.Component {
             <div className={styles.lucky}>
             <Row>
                <span className={styles.prize}>  {this.getContent()}</span>
-            </Row>   
-              
+            </Row>
+
             <Button type="danger" shape="circle" style={{width:'80px',height:'80px'}}  className={styles.startButton}  onClick={()=>this.tonggole()}  >
                 {
                   this.getButton()
@@ -236,8 +236,6 @@ class IndexPage extends React.Component {
             ) : null}
             
 
-            
-            
             </div>
             {/* <div className={styles.footer}>
               <Button onClick={this.onRollUp}>抽奖</Button>
@@ -276,15 +274,16 @@ class IndexPage extends React.Component {
       this.onRollUp()
     }
   }
-  
+
   componentWillUnmount(){
     window.removeEventListener('keypress', this.enterEvent);
   }
 
   componentDidMount() {
-    const {allParticipants} = this.props
+    const SESSION_KEY = 'employees';
+    const value = sessionStorage.getItem(SESSION_KEY)
     window.addEventListener('keypress', this.enterEvent)
-    this.drawService = DrawService.from(allParticipants)
+    this.drawService = DrawService.from(JSON.parse(value))
       .setOnSelectedChangedCallback((selectedItem) => {
         this.setState({
           selectedParticipant: selectedItem,
