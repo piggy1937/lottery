@@ -15,35 +15,39 @@ class DataPage extends React.Component {
     const value = sessionStorage.getItem(SESSION_KEY)
     this.state = {
       employees: value ? JSON.parse(value) : [],
-      value:''
+      inputValue:''
     }
   }
 
   //删除
-  handleDelete = id =>{
+  handleDelete = code =>{
     const employees = [...this.state.employees];
-    console.log(employees)
-    this.setState({ employees: employees.filter(item => item.id !== id) });
-    message.success("删除成功："+id)
+    const newEmployees = employees.filter(item => item.code !== code)
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(newEmployees));
+    this.setState({ employees: newEmployees });
+    message.success("删除成功："+code)
   }
 
 
  //添加
   handleAdd =()=> {
+    console.log("121212121221",this.state.employees)
     const employees = [...this.state.employees]
-    const id = this.input.value;
-    if(id===''){
+    const inputValue = this.state.inputValue
+    if(inputValue===''){
       message.error("添加人员不能为空")
     }else{
-      const newEmployees = {id}
-      this.setState({employees:[...employees,newEmployees],value:''})
+      const add = {code:inputValue}
+      const newEmployees = [...this.state.employees,add]
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(newEmployees));
+      this.setState({employees:newEmployees,inputValue:''})
     }
   }
 
   addValue=(e)=>{
     this.setState({
-      value:e.target.value
-    })
+      inputValue:e.target.value
+  })
   }
 
   onReturn =()=>{
@@ -74,7 +78,6 @@ class DataPage extends React.Component {
                 // break; // 如果只取第一张表，就取消注释这行
               }
             }
-            console.log(data);
             sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
             this.setState({
               employees: data
@@ -113,7 +116,7 @@ class DataPage extends React.Component {
         <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
          添加工号
         </Button>&emsp;&emsp;
-        <input type="text" ref={input => this.input = input} onChange={this.addValue} value = {this.state.value}  placeholder="请输入添加工号"/>
+        <input type="text" ref={input => this.input = input} onChange={this.addValue} value = {this.state.inputValue}  placeholder="请输入添加工号"/>
         <Button onClick={this.onReturn} type="primary" style={{ left:500}}>
           返回
         </Button>
@@ -125,10 +128,10 @@ class DataPage extends React.Component {
         scroll={{ y: 450}}
         dataSource={this.state.employees}
         rowKey={record => record.id}>
-        <Column title="工号" key="id" dataIndex="id" width='25%'/>
+        <Column title="工号" key="code" dataIndex="code" width='25%'/>
 
         <Column title="操作" key="x" dataIndex="" render={
-          (text, record) =>(<Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete( record.id)}>
+          (text, record) =>(<Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete( record.code)}>
             <a>删除</a>
           </Popconfirm>)}
            />
